@@ -63,9 +63,6 @@ min_density: Optional[float] = None, include_elements: Optional[str] = None, exc
     include_elements = include_elements.replace(" ", "").split(",") if include_elements is not None else False
     exclude_elements = exclude_elements.replace(" ", "").split(",") if exclude_elements is not None else False
 
-    print(max_density)
-    print(min_density)
-
     materials = db.query(models.Material)
     
     if min_density is not None:
