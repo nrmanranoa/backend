@@ -1,12 +1,11 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
 from typing import Optional
 
-class PostBase(BaseModel):
+class MaterialBase(BaseModel):
     formula: str
     density: float
 
-class PostCreate(PostBase):
+class MaterialCreate(MaterialBase):
     pass
 
 class GetMaterial(BaseModel):

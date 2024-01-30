@@ -25,10 +25,10 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"Message": "Hello world!"}
+    return {"Message": "Hello world! yeah"}
 
 @app.post("/material", status_code=status.HTTP_201_CREATED, response_model=schemas.Material)
-def post_material(post: schemas.PostCreate, db: Session = Depends(get_db)):
+def post_material(post: schemas.MaterialCreate, db: Session = Depends(get_db)):
     created_material = models.Material(
         **post.dict(),
         elements=utils.separate_elements(post.formula)
@@ -74,8 +74,8 @@ min_density: Optional[float] = None, include_elements: Optional[str] = None, exc
 
     return materials
 
+@app.get("/calculate_fooness/{formula}")
+def calculate_fooness(formula: str):
 
-    print(max_density)
-    print(min_density)
-    print(include_elements)
-    print(exclude_elements)
+    result = utils.fooness(formula)
+    return {"formula": formula, "fooness": result}
