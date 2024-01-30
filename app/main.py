@@ -1,6 +1,7 @@
 from typing import Optional, List
 from fastapi import FastAPI
 from fastapi import FastAPI, status, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from . import models
 from sqlalchemy.orm import Session
 from .database import get_db, engine
@@ -25,19 +26,25 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"Message": "Hello world! yeah"}
+    return {"Message": "Hello world!"}
 
 @app.post("/material", status_code=status.HTTP_201_CREATED, response_model=schemas.Material)
 def post_material(post: schemas.MaterialCreate, db: Session = Depends(get_db)):
-    created_material = models.Material(
+    try:
+        created_material = models.Material(
         **post.dict(),
         elements=utils.separate_elements(post.formula)
     )
-    db.add(created_material)
-    db.commit()
-    db.refresh(created_material)
+        db.add(created_material)
+        db.commit()
+        db.refresh(created_material)
 
-    return created_material
+        return created_material
+    except IntegrityError as e:
+        if "duplicate key value violates unique constraint" in str(e):
+            raise HTTPException(status_code=400, detail="Material with this formula already exists")
+        else:
+            raise HTTPException(status_code=400, detail="An error occurred while creating the material")
 
 @app.get("/material/{id}", response_model=schemas.GetMaterial)
 def get_material(id: int, db: Session = Depends(get_db)):

@@ -6,6 +6,6 @@ class Material(Base):
     __tablename__ = "materials"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    formula = Column(String, nullable=False)
+    formula = Column(String, nullable=False, unique=True)
     density = Column(Float, nullable=False)
     elements = Column(ARRAY(String), nullable=False)
